@@ -42,7 +42,7 @@ class RedisClient {
    * is set and the expiry is set
    */
   set(key, value, expiry) {
-    this.asyncSetX(key, expiry, value);
+    return this.asyncSetX(key, expiry, value);
   }
 
   /**
