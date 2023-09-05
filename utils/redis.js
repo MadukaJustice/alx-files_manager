@@ -7,15 +7,13 @@ import { promisify } from 'util';
 class RedisClient {
   constructor() {
     this.client = createClient();
-    this.isConnected = false;
-
     this.client.on('error', (err) => {
       console.log(err);
     });
-
     this.client.on('connect', () => {
       this.isConnected = true;
     });
+    this.isConnected = false;
   }
 
   /**
