@@ -16,11 +16,6 @@ class RedisClient {
     this.client.on('connect', () => {
       this.isConnected = true;
     });
-
-    this.asyncSetX = promisify(this.client.setex).bind(this.client);
-    this.asyncGet = promisify(this.client.get).bind(this.client);
-    this.asyncDel = promisify(this.client.del).bind(this.client);
-    this.asyncExpire = promisify(this.client.expire).bind(this.client);
   }
 
   /**
@@ -41,8 +36,9 @@ class RedisClient {
    * @return {Promise<void>} - a Promise that resolves when the key-value pair
    * is set and the expiry is set
    */
-  set(key, value, expiry) {
-    return this.asyncSetX(key, expiry, value);
+  async set(key, val, dur) {
+    const setAsync = promisify(this.client.set).bind(this.client);
+    await setAsync(key, val, 'EX', dur);
   }
 
   /**
@@ -51,8 +47,10 @@ class RedisClient {
    * @param {string} key - the key to retrieve the value for
    * @return {*} the value associated with the given key
    */
-  get(key) {
-    return this.asyncGet(key);
+  async get(key) {
+    const getAsync = promisify(this.client.get).bind(this.client);
+    const val = await getAsync(key);
+    return val;
   }
 
   /**
@@ -61,8 +59,9 @@ class RedisClient {
    * @param {any} key - the key to be deleted
    * @return {Promise} A promise that resolves after the deletion is complete
    */
-  del(key) {
-    return this.asyncDel(key);
+  async del(key) {
+    const delAsync = promisify(this.client.del).bind(this.client);
+    await delAsync(key);
   }
 }
 
